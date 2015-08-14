@@ -15,6 +15,12 @@ function defectBot(choice, state) {
     }
 }
 
+function botFromString(code) {
+    var f;
+    eval('f = ' + code);
+    return f;
+}
+
 function payoff(myChoice, theirChoice) {
     if (myChoice && theirChoice) {
         // Two cooperations
@@ -122,7 +128,29 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
     Meteor.startup(function () {
-        // code to run on server at startup
+        Games.find({evaluated: false}).observe({
+            added: function (game) {
+                var bot1 = Bots.findOne(game.participants[0]);
+                var bot2 = Bots.findOne(game.participants[1]);
+                
+                var res = compete(botFromString(bot1.code), botFromString(bot2.code), 100);
+                
+                Bots.update(bot1._id, {
+                    $set: {score: bot1.score + res.me}
+                });
+                Bots.update(bot2._id, {
+                    $set: { score: bot2.score + res.them}
+                });
+                
+                Games.update(game._id, {
+                    $set: {
+                        bot1Score: res['me'],
+                        bot2Score: res['them'],
+                        evaluated: true
+                    }
+                });
+            }
+        });
     });
 }
 
@@ -141,7 +169,7 @@ Meteor.methods({
             
             Bots.find({
                 _id: {$ne: botId}
-            }).map(function (otherBot, index, cursor) {
+            }).forEach(function (otherBot, index, cursor) {
                 Games.insert({
                     participants: [botId, otherBot._id],
                     evaluated: false
