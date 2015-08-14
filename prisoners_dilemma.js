@@ -68,7 +68,7 @@ function compete(me, them, numRounds) {
 
     for (var i=0; i<numRounds; i++) {
         try {
-            var myNext = me(myLastChoice, myState);
+            var myNext = me(themLastChoice, myState);
         } catch (exception) {
             return {
                 me: null,
@@ -77,7 +77,7 @@ function compete(me, them, numRounds) {
         }
         
         try {
-            var themNext = them(themLastChoice, themState);
+            var themNext = them(myLastChoice, themState);
         } catch (exception) {
             return {
                 me: 0,
