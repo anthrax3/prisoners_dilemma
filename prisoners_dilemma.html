@@ -5,7 +5,22 @@
 <body>
     <h1>Iterated Prisoner's Dilemma</h1>
 
-    <textarea id='userCode'>(TODO: better text editor here)(TODO: sample starter code)</textarea>
+    <textarea id='userCode' style='width: 600px; height: 300px;'>function(enemyChoice, state) {
+    // 'enemyChoice' returns the choice your enemy made in the round before
+    //     this one. During the first round, this will be null.
+    // 'state' returns the state you saved for later, last round. During the
+    //     first round, this will be null.
+
+    // In this example, I implement DefectBot. Maybe you want to do something
+    // more complicated!
+
+    // You should return:
+    return {
+        'choice': false,    // Your next move. true = cooperate, false = defect.
+        'state': {},    // Whatever state you want to save for later.
+    }
+
+}</textarea>
 
     <h2>Testing</h2>
     <button id='runTesting'>Run testing</button>

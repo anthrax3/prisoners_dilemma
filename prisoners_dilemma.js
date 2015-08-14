@@ -86,7 +86,7 @@ if (Meteor.isClient) {
         'click button': function(e) {
             var userCode = $('textarea#userCode').val();
 
-            var me = cooperateBot; //TODO -- put my bot here, using userCode
+            eval('var me = '+userCode);
             var numRounds = 20;
 
             var cooperatePayoffs = compete(me, cooperateBot, numRounds);
