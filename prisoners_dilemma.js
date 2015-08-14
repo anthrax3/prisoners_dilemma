@@ -1,3 +1,6 @@
+Bots = new Mongo.Collection('bots'); // [{userId, name, code, score}]
+Games = new Mongo.Colection('games'); // [{participants@[bot1Id, bot2Id], bot1Score, bot2Score, evaluated}]
+
 function cooperateBot(choice, state) {
     return {
         'choice': true,
@@ -122,3 +125,63 @@ if (Meteor.isServer) {
         // code to run on server at startup
     });
 }
+
+Meteor.methods({
+    submitBot: function (userId, name, code) {
+        var prevBot = Bots.findOne({userId: userId});
+        
+        if (prevBot === null) {
+            // creating new bot
+            var botId = Bots.insert({
+                userId: userId,
+                name: name,
+                code: code,
+                score: 0
+            });
+            
+            var otherBots = Bots.find({
+                _id: {$ne: botId}
+            });
+            for (var i = 0; i < otherBots.length; i++) {
+                Games.insert({
+                    participants: [botId, otherBots[i]._id],
+                    evaluated: false
+                });
+            }
+        } else {
+            // updating an existing one
+            Bots.update(prevBot._id, {
+                $set: {
+                    name: name,
+                    code: code,
+                    score: 0
+                }
+            });
+            
+            Games.update({
+                participants: prevBot._id
+            }, {
+                $set: {evaluated: false}
+            });
+        }
+    },
+    getLeaderboard: function () {
+        var leaderboard = [];
+        var bots = Bots.find();
+        for (var i = 0; i < bots.length; i++) {
+            leaderboard.push({
+                userId: bots[i].userId,
+                name: bots[i].name,
+                score: bots[i].score
+            });
+        }
+        bots.sort(function (a, b) {
+            return b.score - a.score;
+        });
+        
+        return {
+            bots: bots,
+            queue: Games.find({evalauated: false}).length
+        };
+    }
+});
