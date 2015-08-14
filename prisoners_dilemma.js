@@ -1,5 +1,5 @@
 Bots = new Mongo.Collection('bots'); // [{userId, name, code, score}]
-Games = new Mongo.Colection('games'); // [{participants@[bot1Id, bot2Id], bot1Score, bot2Score, evaluated}]
+Games = new Mongo.Collection('games'); // [{participants@[bot1Id, bot2Id], bot1Score, bot2Score, evaluated}]
 
 function cooperateBot(choice, state) {
     return {
@@ -130,7 +130,7 @@ Meteor.methods({
     submitBot: function (userId, name, code) {
         var prevBot = Bots.findOne({userId: userId});
         
-        if (prevBot === null) {
+        if ((prevBot === null) || (prevBot === undefined)) {
             // creating new bot
             var botId = Bots.insert({
                 userId: userId,
@@ -139,15 +139,14 @@ Meteor.methods({
                 score: 0
             });
             
-            var otherBots = Bots.find({
+            Bots.find({
                 _id: {$ne: botId}
-            });
-            for (var i = 0; i < otherBots.length; i++) {
+            }).map(function (otherBot, index, cursor) {
                 Games.insert({
-                    participants: [botId, otherBots[i]._id],
+                    participants: [botId, otherBot._id],
                     evaluated: false
                 });
-            }
+            });
         } else {
             // updating an existing one
             Bots.update(prevBot._id, {
@@ -166,22 +165,18 @@ Meteor.methods({
         }
     },
     getLeaderboard: function () {
-        var leaderboard = [];
-        var bots = Bots.find();
-        for (var i = 0; i < bots.length; i++) {
-            leaderboard.push({
-                userId: bots[i].userId,
-                name: bots[i].name,
-                score: bots[i].score
-            });
-        }
-        bots.sort(function (a, b) {
-            return b.score - a.score;
-        });
+        var bots = Bots.find({}, {sort: [['score', 'desc'], ['userId', 'asc']]});
+        var leaderboard = bots.map(function (bot, index, cursor) {
+            return {
+                userId: bot.userId,
+                name: bot.name,
+                score: bot.score
+            };
+        })
         
         return {
-            bots: bots,
-            queue: Games.find({evalauated: false}).length
+            bots: leaderboard,
+            queue: Games.find({evaluated: false}).count()
         };
     }
 });
