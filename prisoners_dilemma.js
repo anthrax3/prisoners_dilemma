@@ -12,6 +12,23 @@ function defectBot(choice, state) {
     }
 }
 
+function payoff(myChoice, theirChoice) {
+    if (myChoice && theirChoice) {
+        // Two cooperations
+        return 50;
+    } else if (myChoice && !theirChoice) {
+        // They defect against me
+        return -100;
+    } else if (!myChoice && theirChoice) {
+        // I defect against them
+        return 100;
+    } else if (!myChoice && !theirChoice) {
+        // We both defect :(
+        return -50;
+    } else {
+        alert("Error: Choices must be true (cooperate) or false (defect)");
+    }
+}
 
 if (Meteor.isClient) {
 
