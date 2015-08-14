@@ -102,6 +102,10 @@ function compete(me, them, numRounds) {
 
 var codeMirrorEditor;
 
+function getCode() {
+    return codeMirrorEditor.getValue();
+}
+
 if (Meteor.isClient) {
     var updateLeaderboard = function () {
         var res = Meteor.call('getLeaderboard', function (error, res) {
@@ -146,8 +150,7 @@ if (Meteor.isClient) {
 
     Template.body.events({
         'click #runTesting': function(e) {
-            var userCode = $('#codeMirrorEditor').val();
-            userCode = codeMirrorEditor.getValue();
+            var userCode = getCode();
 
             var me = botFromString(userCode);
             var numRounds = 100;
@@ -166,7 +169,7 @@ if (Meteor.isClient) {
             e.preventDefault();
             
             var form = e.target;
-            Meteor.call('submitBot', e.target.userId.value, e.target.name.value, $('textarea#userCode').val(), function (error, result) {
+            Meteor.call('submitBot', e.target.userId.value, e.target.name.value, getCode(), function (error, result) {
                 if (error === undefined) {
                     alert('Your code has been submitted, refresh the leaderboard to check your results.');
                 } else {
