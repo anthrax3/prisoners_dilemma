@@ -5,6 +5,31 @@
 <body>
     <h1>Iterated Prisoner's Dilemma</h1>
 
+    <p>Welcome to Iterated Prisoner's Dilemma! Here, you'll implement a bot that plays <a href="https://en.wikipedia.org/wiki/Prisoner%27s_dilemma">Prisoner's Dilemma</a> a bunch of different times against a bunch of different bots written by everyone else.</p>
+
+    <p>Here's our payoff matrix:</p>
+    <table>
+      <tr>
+        <td>Payoff to Me</td>
+        <td>You Cooperate</td>
+        <td>You Defect</td>
+      </tr>
+      <tr>
+        <td>I Cooperate</td>
+        <td><b>+50</b></td>
+        <td><b>-50</b></td>
+      </tr>
+      <tr>
+        <td>I Defect</td>
+        <td><b>+100</b></td>
+        <td><b>+0</b></td>
+      </tr>
+    </table>
+
+    <p>Your bot will play 100 rounds each against all of the other bots. Playing in this game will be <i>zero-sum</i> in terms of SPARC points: your score in the leaderboard will be weighted linearly so that (a) the top player gets +100 points, and (b) the total number of SPARC points allocated is zero.</p>
+
+    <p>Good luck!</p>
+
     <textarea id='userCode' style='width: 600px; height: 300px;'>function(enemyChoice, state) {
     // 'enemyChoice' returns the choice your enemy made in the round before
     //     this one. During the first round, this will be null.
