@@ -216,31 +216,13 @@ if (Meteor.isServer) {
     }
     
     Meteor.startup(function () {
+        Bots.remove({}); Games.remove({});
+        
         Games.find({evaluated: false}).observe({
             changed: function (newGame, oldGame) {
                 evaluateGame(newGame);
             },
-            added: function (game) {
-                var bot1 = Bots.findOne(game.participants[0]);
-                var bot2 = Bots.findOne(game.participants[1]);
-
-                var res = compete(botFromString(bot1.code), botFromString(bot2.code), 100);
-
-                Bots.update(bot1._id, {
-                    $set: {score: bot1.score + res.me}
-                });
-                Bots.update(bot2._id, {
-                    $set: { score: bot2.score + res.them}
-                });
-
-                Games.update(game._id, {
-                    $set: {
-                        bot1Score: res['me'],
-                        bot2Score: res['them'],
-                        evaluated: true
-                    }
-                });
-            }
+            added: evaluateGame
         });
     });
 }
@@ -279,8 +261,10 @@ Meteor.methods({
             });
             
             Games.find({participants: prevBot._id}).forEach(function (game, index, cursor) {
-                Bots.update(game.participants[0], {$inc: {score: -game.bot1Score}});
-                Bots.update(game.participants[1], {$inc: {score: -game.bot2Score}});
+                if (game.evaluated) {
+                    Bots.update(game.participants[0], {$inc: {score: -game.bot1Score}});
+                    Bots.update(game.participants[1], {$inc: {score: -game.bot2Score}});
+                }
                 Games.update(game._id, {$set: {evaluated: false}, $inc: {counter: 1}});
             });
         }
