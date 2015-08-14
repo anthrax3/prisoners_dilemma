@@ -146,7 +146,7 @@ if (Meteor.isClient) {
         'click #runTesting': function(e) {
             var userCode = $('textarea#userCode').val();
 
-            eval('var me = '+userCode);
+            var me = botFromString(userCode);
             var numRounds = 20;
 
             var cooperatePayoffs = compete(me, cooperateBot, numRounds);
@@ -220,7 +220,27 @@ if (Meteor.isServer) {
             changed: function (newGame, oldGame) {
                 evaluateGame(newGame);
             },
-            added: evaluateGame
+            added: function (game) {
+                var bot1 = Bots.findOne(game.participants[0]);
+                var bot2 = Bots.findOne(game.participants[1]);
+
+                var res = compete(botFromString(bot1.code), botFromString(bot2.code), 100);
+
+                Bots.update(bot1._id, {
+                    $set: {score: bot1.score + res.me}
+                });
+                Bots.update(bot2._id, {
+                    $set: { score: bot2.score + res.them}
+                });
+
+                Games.update(game._id, {
+                    $set: {
+                        bot1Score: res['me'],
+                        bot2Score: res['them'],
+                        evaluated: true
+                    }
+                });
+            }
         });
     });
 }
@@ -228,7 +248,7 @@ if (Meteor.isServer) {
 Meteor.methods({
     submitBot: function (userId, name, code) {
         var prevBot = Bots.findOne({userId: userId});
-        
+
         if ((prevBot === null) || (prevBot === undefined)) {
             // creating new bot
             var botId = Bots.insert({
@@ -238,7 +258,7 @@ Meteor.methods({
                 score: 0,
                 failed: false
             });
-            
+
             Bots.find({
                 _id: {$ne: botId}
             }).forEach(function (otherBot, index, cursor) {
@@ -274,7 +294,7 @@ Meteor.methods({
                 score: bot.failed ? NEGINF : bot.score
             };
         })
-        
+
         return {
             bots: leaderboard,
             queue: Games.find({evaluated: false}).count()
