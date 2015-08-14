@@ -3,12 +3,15 @@
 </head>
 
 <body>
+<div class='row'>
+<div class='span4'>
     <h1>Iterated Prisoner's Dilemma</h1>
 
     <p>Welcome to Iterated Prisoner's Dilemma! Here, you'll implement a bot that plays <a href="https://en.wikipedia.org/wiki/Prisoner%27s_dilemma">Prisoner's Dilemma</a> a bunch of different times against a bunch of different bots written by everyone else.</p>
 
     <p>Here's our payoff matrix:</p>
-    <table>
+
+    <p><table>
       <tr>
         <td>Payoff to Me</td>
         <td>You Cooperate</td>
@@ -24,32 +27,20 @@
         <td><b>+100</b></td>
         <td><b>+0</b></td>
       </tr>
-    </table>
+    </table></p>
 
     <p>Your bot will play 100 rounds each against all of the other bots. Playing in this game will be <i>zero-sum</i> in terms of SPARC points: your score in the leaderboard will be weighted linearly so that (a) the top player gets +500 points, and (b) the total number of SPARC points allocated is zero.</p>
 
-    <p>For more information on the Prisoner's Dilemma, read &ldquo;Nice Guys Finish First&rdquo; &ndash; <i>The Selfish Gene</i>, chapter 12.</p>
+    <p>For more information on the Iterated Prisoner's Dilemma in evolutionary game theory, read &ldquo;Nice Guys Finish First&rdquo; &ndash; <i>The Selfish Gene</i>, chapter 12.</p>
 
     <p>Good luck!</p>
 
-    <textarea id='userCode' style='width: 600px; height: 300px;'>function(enemyChoice, state) {
-    // 'enemyChoice' returns the choice your enemy made in the round before
-    //     this one. During the first round, this will be null.
-    // 'state' returns the state you saved for later, last round. During the
-    //     first round, this will be null.
-
-    // In this example, I implement DefectBot. Maybe you want to do something
-    // more complicated!
-
-    // You should return:
-    return {
-        'choice': false,    // Your next move. true = cooperate, false = defect.
-        'state': {},    // Whatever state you want to save for later.
-    }
-
-}</textarea>
-
     {{> testingStats}}
+</div>
+
+<div class='span8'>
+  <h2>Your code</h2>
+  {{> codeMirrorTemplate}}
 
     <h2>Submission</h2>
     <form class='submission'>
@@ -58,6 +49,8 @@
     </form>
     
     {{> results}}
+</div>
+</div>
 </body>
 
 <template name='testingStats'>
@@ -89,4 +82,22 @@
     </table>
     
     <p><em>NB</em> A score of -1000000000 almost certainly means that your program either contains a syntax error or threw an exception during execution in one of the rounds.</p>
+</template>
+
+<template name="codeMirrorTemplate">
+  <textarea id="codeMirrorEditor">function(enemyChoice, state) {
+    // 'enemyChoice' returns the choice your enemy made in the round before
+    //     this one. During the first round, this will be null.
+    // 'state' returns the state you saved for later, last round. During the
+    //     first round, this will be null.
+
+    // In this example, I implement DefectBot. Maybe you want to do something
+    // more complicated!
+
+    // You should return:
+    return {
+        'choice': false,    // Your next move. true = cooperate, false = defect.
+        'state': {},    // Whatever state you want to save for later.
+    }
+}</textarea>
 </template>

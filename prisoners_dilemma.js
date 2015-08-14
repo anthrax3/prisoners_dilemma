@@ -100,6 +100,8 @@ function compete(me, them, numRounds) {
     }
 }
 
+var codeMirrorEditor;
+
 if (Meteor.isClient) {
     var updateLeaderboard = function () {
         var res = Meteor.call('getLeaderboard', function (error, res) {
@@ -144,10 +146,11 @@ if (Meteor.isClient) {
 
     Template.body.events({
         'click #runTesting': function(e) {
-            var userCode = $('textarea#userCode').val();
+            var userCode = $('#codeMirrorEditor').val();
+            userCode = codeMirrorEditor.getValue();
 
             var me = botFromString(userCode);
-            var numRounds = 20;
+            var numRounds = 100;
 
             var cooperatePayoffs = compete(me, cooperateBot, numRounds);
             Session.set('cooperateBotStats', 'You earned '+cooperatePayoffs.me+' and CooperateBot earned '+cooperatePayoffs.them+' over '+numRounds+' rounds.');
@@ -175,6 +178,13 @@ if (Meteor.isClient) {
             updateLeaderboard();
         }
     });
+
+    Template.codeMirrorTemplate.rendered = function() {
+        codeMirrorEditor = CodeMirror.fromTextArea(this.find("#codeMirrorEditor"), {
+            lineNumbers: true,
+            mode: "javascript" // set any of supported language modes here
+        });
+    }
 }
 
 if (Meteor.isServer) {

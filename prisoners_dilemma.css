@@ -1,9 +1,24 @@
 /* CSS declarations go here */
 
 td {
-padding: 10px;
+    padding: 10px;
 }
 
-table {
-margin-left: 100px;
+table, tr, td {
+    margin: auto;
+    border: 1px solid #ddd;
+}
+
+textarea {
+    font-family: monospace;
+    width: 100%;
+}
+
+.CodeMirror {
+    border: 1px solid #ddd;
+    height: auto;
+}
+
+div.row {
+    margin: 20px;
 }
