@@ -180,15 +180,14 @@ Meteor.methods({
             Bots.update(prevBot._id, {
                 $set: {
                     name: name,
-                    code: code,
-                    score: 0
+                    code: code
                 }
             });
             
-            Games.update({
-                participants: prevBot._id
-            }, {
-                $set: {evaluated: false}
+            Games.find({participants: prevBot._id}).forEach(function (game, index, cursor) {
+                Bots.update(game.participants[0], {$inc: {score: -game.bot1Score}});
+                Bots.update(game.participants[1], {$inc: {score: -game.bot2Score}});
+                Games.update(game._id, {$set: {evaluated: false}});
             });
         }
     },
