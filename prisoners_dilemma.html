@@ -22,21 +22,21 @@
 
 }</textarea>
 
-    <h2>Testing</h2>
-    <button id='runTesting'>Run testing</button>
-    <p>{{> testingStats}}</p>
+    {{> testingStats}}
 
-    <h2>Leaderboard</h2>
-    <p>(TODO: number of bots submitted)</p>
-    <p>(TODO: fancy leaderboard)</p>
-
-    <h2>Results</h2>
-    <button id='getResults'>Evaluate your program against the others</button>
-    <p>(TODO: stats about how well your program does overall)</p>
-
+    <h2>Submission</h2>
+    <form class='submission'>
+        <input name='userId' placeholder='Your SPARC ID'><input name='name' placeholder='Your name'>
+        <button type='submit'>Submit your program</button>
+    </form>
+    
+    {{> results}}
 </body>
 
 <template name='testingStats'>
+    <h2>Testing</h2>
+    <button id='runTesting'>Run testing</button>
+    
     <h3>vs. CooperateBot</h3>
     <p>{{cooperateBotStats}}</p>
 
@@ -45,4 +45,21 @@
 
     <h3>vs. yourself</h3>
     <p>{{yourselfBotStats}}</p>
+</template>
+
+<template name='results'>
+    <h2>Leaderboard</h2>
+    <button id='refresh'>Refresh the leaderboard</button>
+    <p>Number of games in the queue: {{queueSize}}</p>
+    <table border='1'>
+    {{#each bots}}
+        <tr>
+            <td>{{userId}}</td>
+            <td>{{name}}</td>
+            <td>{{score}}</td>
+        </tr>
+    {{/each}}
+    </table>
+    
+    <p><em>NB</em> A score of -1000000000 almost certainly means that your program either contains a syntax error or threw an exception during execution in one of the rounds.</p>
 </template>

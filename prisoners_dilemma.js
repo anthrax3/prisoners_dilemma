@@ -101,10 +101,23 @@ function compete(me, them, numRounds) {
 }
 
 if (Meteor.isClient) {
+    var updateLeaderboard = function () {
+        var res = Meteor.call('getLeaderboard', function (error, res) {
+            if (error !== undefined) {
+                alert('Sorry, something went wrong!');
+                return;
+            }
+            
+            Session.set('queueSize', res.queue);
+            Session.set('bots', res.bots);
+        });
+    }
 
     Session.setDefault('cooperateBotStats', 'No data yet.');
     Session.setDefault('defectBotStats', 'No data yet.');
     Session.setDefault('yourselfBotStats', 'No data yet.');
+    Session.setDefault('queueSize', '0');
+    Session.setDefault('leaderboard', 'No data yet.')
 
     Template.testingStats.helpers({
         cooperateBotStats: function() {
@@ -115,11 +128,22 @@ if (Meteor.isClient) {
         },
         yourselfBotStats: function() {
             return Session.get('yourselfBotStats');
-        },
+        }
     });
+    
+    Template.results.helpers({
+        queueSize: function() {
+            return Session.get('queueSize');
+        },
+        bots: function() {
+            return Session.get('bots');
+        }
+    });
+    
+    updateLeaderboard();
 
     Template.body.events({
-        'click button': function(e) {
+        'click #runTesting': function(e) {
             var userCode = $('textarea#userCode').val();
 
             eval('var me = '+userCode);
@@ -134,6 +158,21 @@ if (Meteor.isClient) {
             var yourselfPayoffs = compete(me, me, numRounds);
             Session.set('yourselfBotStats', 'Playing against yourself, You #1 earned '+yourselfPayoffs.me+' and You #2 earned '+yourselfPayoffs.them+' over '+numRounds+' rounds.');
 
+        },
+        'submit .submission': function(e) {
+            e.preventDefault();
+            
+            var form = e.target;
+            Meteor.call('submitBot', e.target.userId.value, e.target.name.value, $('textarea#userCode').val(), function (error, result) {
+                if (error === undefined) {
+                    alert('Your code has been submitted, refresh the leaderboard to check your results.');
+                } else {
+                    alert('Sorry, something went wrong!');
+                }
+            });
+        },
+        'click #refresh': function(e) {
+            updateLeaderboard();
         }
     });
 }
