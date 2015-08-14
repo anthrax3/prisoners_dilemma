@@ -1,21 +1,52 @@
+function cooperateBot(choice, state) {
+    return {
+        'choice': true,
+        'state': {},
+    }
+}
+
+function defectBot(choice, state) {
+    return {
+        'choice': false,
+        'state': {},
+    }
+}
+
+
 if (Meteor.isClient) {
 
-  // Old stuff
-  // // counter starts at 0
-  // Session.setDefault('counter', 0);
+    Session.setDefault('cooperateBotStats', 'No data yet.');
 
-  // Template.results.helpers({
-  //   counter: function () {
-  //     return Session.get('counter');
-  //   }
-  // });
+    Template.cooperateBotStats.helpers({
+        cooperateBotStats: function() {
+            return Session.get('cooperateBotStats');
+        }
+    });
 
-  // Template.results.events({
-  //   'click button': function () {
-  //     // increment the counter when button is clicked
-  //     Session.set('counter', Session.get('counter') + 1);
-  //   }
-  // });
+    Template.body.events({
+        'click button': function(e) {
+            var userCode = $('textarea#userCode').val();
+            Session.set('cooperateBotStats', userCode);
+        }
+    });
+
+
+    // Old stuff
+    // // counter starts at 0
+    // Session.setDefault('counter', 0);
+
+    // Template.results.helpers({
+    //     counter: function () {
+    //         return Session.get('counter');
+    //     }
+    // });
+
+    // Template.results.events({
+    //     'click button': function () {
+    //         // increment the counter when button is clicked
+    //         Session.set('counter', Session.get('counter') + 1);
+    //     }
+    // });
 }
 
 if (Meteor.isServer) {
