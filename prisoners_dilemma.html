@@ -9,14 +9,7 @@
 
     <h2>Testing</h2>
     <button id='runTesting'>Run testing</button>
-    <h3>vs. CooperateBot</h3>
-    <p>{{> cooperateBotStats}}</p>
-
-    <h3>vs. DefectBot</h3>
-    <p>(TODO: stats for your code against DefectBot)</p>
-
-    <h3>vs. itself</h3>
-    <p>(TODO: stats for your code against itself)</p>
+    <p>{{> testingStats}}</p>
 
     <h2>Leaderboard</h2>
     <p>(TODO: number of bots submitted)</p>
@@ -28,6 +21,13 @@
 
 </body>
 
-<template name='cooperateBotStats'>
+<template name='testingStats'>
+    <h3>vs. CooperateBot</h3>
     <p>{{cooperateBotStats}}</p>
+
+    <h3>vs. DefectBot</h3>
+    <p>{{defectBotStats}}</p>
+
+    <h3>vs. yourself</h3>
+    <p>{{yourselfBotStats}}</p>
 </template>
